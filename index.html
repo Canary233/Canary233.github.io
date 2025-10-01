@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/">修复MLX5启用SRIOV时，客户机报hw csum failure</a>
+      <a class="p-name article-title" href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/">修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线</a>
     </h1>
   
 
@@ -93,7 +93,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="修复MLX5启用SRIOV时，客户机报hw-csum-failure，导致掉线"><a href="#修复MLX5启用SRIOV时，客户机报hw-csum-failure，导致掉线" class="headerlink" title="修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线"></a>修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线</h1><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>Proxmox默认启用<code>iommu.passthrough=0</code>,日志表现为<code>iommu: Default domain type: Translated</code>.</p>
+        <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>Proxmox默认启用<code>iommu.passthrough=0</code>,日志表现为<code>iommu: Default domain type: Translated</code>.</p>
 <p>此模式与MLX5驱动存在兼容性问题，会导致分配VF的客户机出现<code>(NULL net_device): hw csum failure</code>报错。在OpenWrt上，此错误并不会导致立即离线，而是在第二次出现(约10d)时离线.</p>
 <h2 id="如何修复"><a href="#如何修复" class="headerlink" title="如何修复"></a>如何修复</h2><p>在<code>/etc/default/grub</code>的<code>GRUB_CMDLINE_LINUX_DEFAULT</code>中加入<code>iommu=pt</code></p>
 <p>随后执行<code>update-grub</code>，重启即可。</p>
@@ -103,7 +103,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2025/10/01/fix-mlx5-sriov-hw-csum-failure/" data-id="cuidhWuZv0TQaeAc2q52oDr5N" data-title="修复MLX5启用SRIOV时，客户机报hw csum failure" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://example.com/2025/10/01/fix-mlx5-sriov-hw-csum-failure/" data-id="cuid1ttU8GWAeEaqcvyOikmZG" data-title="修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -162,7 +162,7 @@
       <ul>
         
           <li>
-            <a href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/">修复MLX5启用SRIOV时，客户机报hw csum failure</a>
+            <a href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/">修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线</a>
           </li>
         
       </ul>
