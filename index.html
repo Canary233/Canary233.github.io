@@ -177,7 +177,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/" class="post-title-link" itemprop="url">修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线</a>
+          <a href="/2025/10/01/fix-mlx5-sriov-hw-csum-failure/" class="post-title-link" itemprop="url">修复MLX5 SRIOV，客户机报hw csum failure</a>
         </h2>
 
         <div class="post-meta-container">
@@ -195,7 +195,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-10-02 00:27:07" itemprop="dateModified" datetime="2025-10-02T00:27:07+08:00">2025-10-02</time>
+      <time title="Modified: 2025-10-17 11:26:13" itemprop="dateModified" datetime="2025-10-17T11:26:13+08:00">2025-10-17</time>
     </span>
 
   
@@ -208,12 +208,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>Proxmox默认启用<code>iommu.passthrough=0</code>,日志表现为<code>iommu: Default domain type: Translated</code>.</p>
-<p>此模式与MLX5驱动存在兼容性问题，会导致分配VF的客户机出现<code>(NULL net_device): hw csum failure</code>报错。在OpenWrt上，此错误并不会导致立即离线，而是在第二次出现(约10d)时离线.</p>
-<h2 id="如何修复"><a href="#如何修复" class="headerlink" title="如何修复"></a>如何修复</h2><p>在<code>/etc/default/grub</code>的<code>GRUB_CMDLINE_LINUX_DEFAULT</code>中加入<code>iommu=pt</code></p>
-<p>随后执行<code>update-grub</code>，重启即可。</p>
-<p>此参数将启用Bypass the IOMMU for DMA,日志表现为<code>iommu: Default domain type: Passthrough (set via kernel command line)</code>.</p>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>此问题仅在ConnectX4LX(MCX4421A-ACQ_Ax)测试，其他使用MLX5的NIC尚不清楚是否存在此问题.</p>
+          <h2 id="表现"><a href="#表现" class="headerlink" title="表现"></a>表现</h2><p>Openwrt dmesg报<code>hw csum failure</code></p>
+<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>CPU不稳定</p>
+<h2 id="如何修复"><a href="#如何修复" class="headerlink" title="如何修复"></a>如何修复</h2><p>降低CPU频率或提高电压</p>
 
       
     </div>

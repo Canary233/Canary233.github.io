@@ -19,15 +19,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"blog.canary233.eu.org","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="原因Proxmox默认启用iommu.passthrough&#x3D;0,日志表现为iommu: Default domain type: Translated. 此模式与MLX5驱动存在兼容性问题，会导致分配VF的客户机出现(NULL net_device): hw csum failure报错。在OpenWrt上，此错误并不会导致立即离线，而是在第二次出现(约10d)时离线. 如何修复在&#x2F;etc&#x2F;de">
+    <meta name="description" content="表现Openwrt dmesg报hw csum failure 原因CPU不稳定 如何修复降低CPU频率或提高电压">
 <meta property="og:type" content="article">
-<meta property="og:title" content="修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线">
+<meta property="og:title" content="修复MLX5 SRIOV，客户机报hw csum failure">
 <meta property="og:url" content="https://blog.canary233.eu.org/2025/10/01/fix-mlx5-sriov-hw-csum-failure/index.html">
 <meta property="og:site_name" content="Canary233&#39;s archives">
-<meta property="og:description" content="原因Proxmox默认启用iommu.passthrough&#x3D;0,日志表现为iommu: Default domain type: Translated. 此模式与MLX5驱动存在兼容性问题，会导致分配VF的客户机出现(NULL net_device): hw csum failure报错。在OpenWrt上，此错误并不会导致立即离线，而是在第二次出现(约10d)时离线. 如何修复在&#x2F;etc&#x2F;de">
+<meta property="og:description" content="表现Openwrt dmesg报hw csum failure 原因CPU不稳定 如何修复降低CPU频率或提高电压">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-10-01T15:51:21.000Z">
-<meta property="article:modified_time" content="2025-10-01T16:27:07.274Z">
+<meta property="article:modified_time" content="2025-10-17T03:26:13.917Z">
 <meta property="article:author" content="Canary233">
 <meta property="article:tag" content="Proxmox">
 <meta name="twitter:card" content="summary">
@@ -36,10 +36,10 @@
 <link rel="canonical" href="https://blog.canary233.eu.org/2025/10/01/fix-mlx5-sriov-hw-csum-failure/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.canary233.eu.org/2025/10/01/fix-mlx5-sriov-hw-csum-failure/","path":"2025/10/01/fix-mlx5-sriov-hw-csum-failure/","title":"修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://blog.canary233.eu.org/2025/10/01/fix-mlx5-sriov-hw-csum-failure/","path":"2025/10/01/fix-mlx5-sriov-hw-csum-failure/","title":"修复MLX5 SRIOV，客户机报hw csum failure"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线 | Canary233's archives</title>
+<title>修复MLX5 SRIOV，客户机报hw csum failure | Canary233's archives</title>
   
 
 
@@ -121,7 +121,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E5%A4%8D"><span class="nav-number">2.</span> <span class="nav-text">如何修复</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">表现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%AE%E5%A4%8D"><span class="nav-number">3.</span> <span class="nav-text">如何修复</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -179,12 +179,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线 | Canary233's archives">
+      <meta itemprop="name" content="修复MLX5 SRIOV，客户机报hw csum failure | Canary233's archives">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          修复MLX5启用SRIOV时，客户机报hw csum failure，导致掉线
+          修复MLX5 SRIOV，客户机报hw csum failure
         </h1>
 
         <div class="post-meta-container">
@@ -202,7 +202,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2025-10-02 00:27:07" itemprop="dateModified" datetime="2025-10-02T00:27:07+08:00">2025-10-02</time>
+      <time title="Modified: 2025-10-17 11:26:13" itemprop="dateModified" datetime="2025-10-17T11:26:13+08:00">2025-10-17</time>
     </span>
 
   
@@ -214,12 +214,9 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>Proxmox默认启用<code>iommu.passthrough=0</code>,日志表现为<code>iommu: Default domain type: Translated</code>.</p>
-<p>此模式与MLX5驱动存在兼容性问题，会导致分配VF的客户机出现<code>(NULL net_device): hw csum failure</code>报错。在OpenWrt上，此错误并不会导致立即离线，而是在第二次出现(约10d)时离线.</p>
-<h2 id="如何修复"><a href="#如何修复" class="headerlink" title="如何修复"></a>如何修复</h2><p>在<code>/etc/default/grub</code>的<code>GRUB_CMDLINE_LINUX_DEFAULT</code>中加入<code>iommu=pt</code></p>
-<p>随后执行<code>update-grub</code>，重启即可。</p>
-<p>此参数将启用Bypass the IOMMU for DMA,日志表现为<code>iommu: Default domain type: Passthrough (set via kernel command line)</code>.</p>
-<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>此问题仅在ConnectX4LX(MCX4421A-ACQ_Ax)测试，其他使用MLX5的NIC尚不清楚是否存在此问题.</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="表现"><a href="#表现" class="headerlink" title="表现"></a>表现</h2><p>Openwrt dmesg报<code>hw csum failure</code></p>
+<h2 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h2><p>CPU不稳定</p>
+<h2 id="如何修复"><a href="#如何修复" class="headerlink" title="如何修复"></a>如何修复</h2><p>降低CPU频率或提高电压</p>
 
     </div>
 
